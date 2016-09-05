@@ -1,0 +1,43 @@
+{
+	"name": "centro",
+	"version": "0.1.0",
+	"description": "Describe your API, write your controllers, and off you go!",
+	"main": "source",
+	"scripts": {
+		"check": "nsp check",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://hifaraz@github.com/HiFaraz/centro.git"
+	},
+	"keywords": [
+		"microservice",
+		"framework",
+		"api"
+	],
+	"author": "Faraz Syed <hello@farazsyed.com>",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/HiFaraz/centro/issues"
+	},
+	"homepage": "https://github.com/HiFaraz/centro#readme",
+	"dependencies": {
+		"asyncawait": "^1.0.6",
+		"bluebird": "^3.4.6",
+		"body-parser": "^1.15.2",
+		"debug": "^2.2.0",
+		"express": "^4.14.0",
+		"helmet": "^2.1.2",
+		"http-codes": "^1.0.0",
+		"js-yaml": "^3.6.1",
+		"lodash.merge": "^4.6.0",
+		"pg": "^6.1.0",
+		"pg-hstore": "^2.3.2",
+		"sequelize": "^3.24.1",
+		"toobusy-js": "^0.5.1"
+	},
+	"devDependencies": {
+		"nsp": "^2.6.1"
+	}
+}
