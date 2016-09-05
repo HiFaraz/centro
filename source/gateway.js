@@ -1,7 +1,7 @@
 'use strict';
 const debug = require('debug')('centro:gateway');
 
-module.exports = function(doc) {
+module.exports = function gateway(doc) {
   debug('entered plugin', doc.info.title);
 
   Object.keys(doc.paths)
@@ -10,7 +10,7 @@ module.exports = function(doc) {
         .forEach((method) => {
           const service = doc.paths[path][method]['x-service'];
           const newPath = ((doc.basePath.slice(-1) == '/') ? doc.basePath.slice(0, -1) : doc.basePath) + convertPath(path);
-          debug('new endpoint', method, '\'' + newPath + '\'', service);
+          debug('new endpoint', method, '\'' + newPath + '\'', '=>', service);
           this.promisify('server:' + method, newPath, service)
             .then(value => debug('success', value))
             .catch(error => debug('fail', error));

@@ -7,7 +7,7 @@ const httpCodes = require('http-codes');
 const helmet = require('helmet');
 const toobusy = require('toobusy-js');
 
-module.exports = function(configuration) {
+module.exports = function server(configuration) {
   debug('entered plugin');
   const app = express();
   addGeneralMiddleware(app);
@@ -20,7 +20,7 @@ module.exports = function(configuration) {
   this.add('server:start', (callback) => {
     server.start();
     callback(null, true);
-    this.promisify('server:started')
+    this.promisify('server:start:success')
       .catch(() => {});
   });
   this.add('server:shutdown', (callback) => {
@@ -48,14 +48,14 @@ function createServer(app, configuration) {
 
   const gracefulShutdown = () => {
     if (this.running) {
-      debug('stopping');
+      debug('stop:attempt');
       this.server.close(() => {
-        debug('stopped');
+        debug('stop:success');
         this.running = false;
         process.exit();
       });
       setTimeout(function() {
-        debug('could not close connections in time, forcefully shutting down');
+        debug('stop:forced', 'could not close connections in time, forcefully shutting down');
         this.running = false;
         process.exit();
       }, configuration.timeout);
@@ -63,10 +63,10 @@ function createServer(app, configuration) {
   };
 
   const start = () => {
-    debug('starting');
+    debug('start:attempt');
     this.server = app.listen(process.env.PORT || configuration.port);
     this.running = true;
-    debug('started at port', this.server.address()
+    debug('start:success', 'PORT', this.server.address()
       .port);
     process.on('SIGTERM', gracefulShutdown);
     process.on('SIGINT', gracefulShutdown);

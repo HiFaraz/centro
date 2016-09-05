@@ -2,7 +2,7 @@
 const debug = require('debug')('centro:persistence');
 const Sequelize = require('sequelize');
 
-module.exports = function(configuration) {
+module.exports = function persistence(configuration) {
   debug('entered plugin');
   const connection = new Sequelize(configuration.name, configuration.username, configuration.password, {
     logging: false,
@@ -19,35 +19,35 @@ module.exports = function(configuration) {
   });
 
   this.add('persistence:sync', (callback) => {
-    debug('syncing');
+    debug('sync:attempt');
     connection
       .sync({
         force: true
       })
       .then(() => {
-        debug('synced');
+        debug('sync:success');
         callback(null, true);
-        this.promisify('persistence:synced')
+        this.promisify('persistence:sync:success')
           .catch(() => {});
       })
       .catch((error) => {
-        debug('cannot sync to database', error);
+        debug('sync:fail', error);
         callback(error);
       });
   });
 
   this.add('persistence:authenticate', (callback) => {
-    debug('authenticating');
+    debug('authenticate:attempt');
     connection
       .authenticate()
       .then(() => {
-        debug('authenticated');
+        debug('authenticate:success');
         callback(null, true);
-        this.promisify('persistence:authenticated')
+        this.promisify('persistence:authenticate:sucess')
           .catch(() => {});
       })
       .catch((error) => {
-        debug('cannot authenticate to database', error);
+        debug('authenticate:fail', error);
         callback(error);
       });
   });
@@ -55,7 +55,7 @@ module.exports = function(configuration) {
   this.add('persistence:shutdown', gracefulShutdown);
 
   function gracefulShutdown() {
-    debug('closing');
+    debug('shutdown:attempt');
     connection.close();
   }
 

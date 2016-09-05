@@ -1,14 +1,14 @@
 'use strict';
 const debug = require('debug')('centro:start');
 
-exports = module.exports = function() {
+exports = module.exports = function start() {
   debug('entered plugin');
   try {
     this.await('persistence:authenticate');
     try {
       this.await('models:define');
     } catch (error) {
-      debug('error in loading models', error);
+      debug('models:define:error', error);
     }
     this.await('server:start');
   } catch (error) {

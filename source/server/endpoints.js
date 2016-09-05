@@ -3,7 +3,7 @@ const debug = require('debug')('centro:server/endpoints');
 const httpCodes = require('http-codes');
 const merge = require('lodash.merge');
 
-module.exports = function(app) {
+module.exports = function endpoints(app) {
   debug('entered plugin');
 
   ['checkout', 'copy', 'delete', 'get', 'head', 'lock', 'merge', 'mkactivity', 'mkcol', 'move', 'm-search', 'notify', 'options', 'patch', 'post', 'purge', 'put', 'report', 'search', 'subscribe', 'trace', 'unlock', 'unsubscribe'].forEach(method => this.add('server:' + method, (path, service) => this.promisify('server:endpoint', method, path, service)));

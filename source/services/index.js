@@ -21,13 +21,13 @@ class ServiceRunner {
   }
   api() {
     const apiPath = path.join.apply(this, [...arguments]);
-    debug('attempt api load', apiPath);
+    debug('api:attempt', apiPath);
     try {
       const doc = yaml.safeLoad(fs.readFileSync(path.join(this.parentPath, apiPath), 'utf8'));
       this.use(this.apiGateway, doc);
-      debug('success');
+      debug('api:success', apiPath);
     } catch (e) {
-      debug('fail');
+      debug('api:fail', apiPath);
     }
     return this;
   }
@@ -65,16 +65,20 @@ class ServiceRunner {
     args.shift();
     if (typeof serviceGroup === 'string' || serviceGroup instanceof String) {
       const serviceGroupPath = path.join(this.parentPath, serviceGroup);
-      debug('plugin load attempt', serviceGroupPath);
+      debug('plugin:attempt', serviceGroup);
       try {
         asyncify(require(serviceGroupPath), this, args)();
-        debug('success');
+        debug('plugin:success', serviceGroup);
         this.api(serviceGroup, 'api.yaml');
       } catch (error) {
-        debug('fail: ' + serviceGroup);
+        debug('plugin:fail', serviceGroup);
         throw error;
       }
-    } else asyncify(serviceGroup, this, args)();
+    } else if (typeof serviceGroup === 'function') {
+      debug('plugin:attempt', (serviceGroup.name !== '') ? serviceGroup.name : 'anonymous function');
+      asyncify(serviceGroup, this, args)();
+      debug('plugin:success', (serviceGroup.name !== '') ? serviceGroup.name : 'anonymous function');
+    } else throw 'plugin parameter must be either a function or a string that points to a module that can be loaded with require()';
     return this;
   }
 }
