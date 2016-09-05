@@ -20,7 +20,8 @@ module.exports = function(configuration) {
   this.add('server:start', (callback) => {
     server.start();
     callback(null, true);
-    this.promisify('server:started');
+    this.promisify('server:started')
+      .catch(() => {});
   });
   this.add('server:shutdown', (callback) => {
     server.shutdown();
