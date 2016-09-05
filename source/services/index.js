@@ -31,9 +31,15 @@ class ServiceRunner {
     }
     return this;
   }
-  await () {
-    const args = [...arguments];
-    return awaitFunction(this.promisify.apply(this, args));
+  async(fun) {
+    return asyncFunction(fun);
+  }
+  await (fun) {
+    if (fun instanceof Promise) return awaitFunction(fun);
+    else {
+      const args = [...arguments];
+      return awaitFunction(this.promisify.apply(this, args));
+    }
   }
   promisify(serviceName) {
     const args = [...arguments];
