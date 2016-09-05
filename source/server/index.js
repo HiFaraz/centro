@@ -18,9 +18,13 @@ module.exports = function server(configuration) {
   this.use(endpoints, app);
 
   this.add('server:start', (callback) => {
-    server.start();
+    const port = server.start();
     callback(null, true);
-    this.promisify('server:start:success')
+    const startupTime = this.await('centro:timer');
+    this.promisify('server:start:success', {
+        port: port,
+        startupTime: startupTime
+      })
       .catch(() => {});
   });
   this.add('server:shutdown', (callback) => {
@@ -70,6 +74,8 @@ function createServer(app, configuration) {
       .port);
     process.on('SIGTERM', gracefulShutdown);
     process.on('SIGINT', gracefulShutdown);
+    return this.server.address()
+      .port;
   };
 
   return {
