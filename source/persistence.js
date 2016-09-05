@@ -27,6 +27,7 @@ module.exports = function(configuration) {
       .then(() => {
         debug('synced');
         callback(null, true);
+        this.promisify('persistence:synced');
       })
       .catch((error) => {
         debug('cannot sync to database', error);
@@ -41,6 +42,7 @@ module.exports = function(configuration) {
       .then(() => {
         debug('authenticated');
         callback(null, true);
+        this.promisify('persistence:authenticated');
       })
       .catch((error) => {
         debug('cannot authenticate to database', error);
