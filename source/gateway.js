@@ -9,8 +9,9 @@ module.exports = function(doc) {
       Object.keys(doc.paths[path])
         .forEach((method) => {
           const service = doc.paths[path][method]['x-service'];
-          debug('new endpoint', method, '\'' + convertPath(path) + '\'', service);
-          this.promisify('server:' + method, convertPath(path), service)
+          const newPath = ((doc.basePath.slice(-1) == '/') ? doc.basePath.slice(0, -1) : doc.basePath) + convertPath(path);
+          debug('new endpoint', method, '\'' + newPath + '\'', service);
+          this.promisify('server:' + method, newPath, service)
             .then(value => debug('success', value))
             .catch(error => debug('fail', error));
         });
