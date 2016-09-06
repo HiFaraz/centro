@@ -23,9 +23,14 @@ module.exports = function endpoints(app) {
         code: code,
         data: data
       });
+
+      function stringify(value) {
+        return (typeof value == 'number') ? value.toString() : value;
+      }
+
       if (data || data == 0) response
         .status(code)
-        .send(data);
+        .send(stringify(data));
       else response.sendStatus(code);
       callback(null, {
         code: code,
