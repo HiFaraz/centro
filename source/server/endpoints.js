@@ -6,7 +6,14 @@ const merge = require('lodash.merge');
 module.exports = function endpoints(app) {
   debug('entered plugin');
 
-  ['checkout', 'copy', 'delete', 'get', 'head', 'lock', 'merge', 'mkactivity', 'mkcol', 'move', 'm-search', 'notify', 'options', 'patch', 'post', 'purge', 'put', 'report', 'search', 'subscribe', 'trace', 'unlock', 'unsubscribe'].forEach(method => this.add('server:' + method, (path, service) => this.promisify('server:endpoint', method, path, service)));
+  ['checkout', 'copy', 'delete', 'get', 'head', 'lock', 'merge', 'mkactivity', 'mkcol', 'move', 'm-search', 'notify', 'options', 'patch', 'post', 'purge', 'put', 'report', 'search', 'subscribe', 'trace', 'unlock', 'unsubscribe']
+  .forEach(method =>
+    this.add('server:' + method, (path, service, callback) =>
+      this.promisify('server:endpoint', method, path, service)
+      .then(value => callback(null, value))
+      .catch(error => callback(error))
+    )
+  );
 
   this.add('server:endpoint', (method, path, service, callback) => {
     debug('adding endpoint', method, '\'' + path + '\'', 'consumes', '\'' + service + '\'');
@@ -60,6 +67,7 @@ module.exports = function endpoints(app) {
     } catch (error) {
       debug(error);
       reject(error.code, error.data);
+      if (error == 'no service registered @ ' + service) throw error;
     }
   });
 };
