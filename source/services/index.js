@@ -8,9 +8,10 @@ const Promise = require('bluebird');
 const yaml = require('js-yaml');
 
 class ServiceRunner {
-  constructor(parentPath, apiGateway) {
+  constructor(parentPath, apiGateway, hasPersistence) {
     this.apiGateway = apiGateway;
     this.parentPath = parentPath;
+    this.hasPersistence = hasPersistence;
     this.services = new Object();
   }
   add(serviceName, handler) {
@@ -64,7 +65,7 @@ class ServiceRunner {
     return this.services.hasOwnProperty(serviceName);
   }
   start() {
-    this.use(require('../start'));
+    this.use(require('../start'), this.hasPersistence);
   }
   use(serviceGroup) {
     const args = [...arguments];
@@ -99,6 +100,6 @@ function bind(fun, context, args) {
   };
 }
 
-module.exports = function(parentPath, apiGateway) {
-  return new ServiceRunner(parentPath, apiGateway);
+module.exports = function(parentPath, apiGateway, hasPersistence) {
+  return new ServiceRunner(parentPath, apiGateway, hasPersistence);
 };

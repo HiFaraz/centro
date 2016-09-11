@@ -1,20 +1,15 @@
 'use strict';
 const debug = require('debug')('centro:start');
 
-exports = module.exports = function start() {
-  debug('entered plugin');
+exports = module.exports = function start(hasPersistence) {
+  debug('entered plugin', hasPersistence);
   try {
-    this.await('persistence:authenticate');
-    try {
-      this.await('models:define');
-    } catch (error) {
-      debug('models:define:error', error);
-    }
+    if (hasPersistence) this.await('persistence:authenticate');
     this.await('server:start');
   } catch (error) {
     debug('error in starting app', error);
     this.promisify('server:shutdown');
-    this.promisify('persistence:shutdown');
+    if (hasPersistence) this.promisify('persistence:shutdown');
     process.kill(process.pid, 'SIGTERM');
   }
 };

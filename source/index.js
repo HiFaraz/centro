@@ -8,11 +8,12 @@ const persistence = require('./persistence');
 const server = require('./server');
 
 module.exports = function(configuration) {
-  const services = require('./services')(parentPath, gateway);
+  const hasPersistence = (typeof configuration.persistence !== 'undefined');
+  const services = require('./services')(parentPath, gateway, hasPersistence);
   debug('start');
   services
     .use(timer)
-    .use(server, configuration.server)
-    .use(persistence, configuration.persistence);
+    .use(server, configuration.server);
+  if (hasPersistence) services.use(persistence, configuration.persistence);
   return services;
 };
