@@ -39,5 +39,8 @@
 	},
 	"devDependencies": {
 		"nsp": "^2.6.1"
+	},
+	"engines": {
+		"node": ">=6.3.1 <7.0.0"
 	}
 }
