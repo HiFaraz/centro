@@ -31,10 +31,6 @@ module.exports = function endpoints(app) {
         data: data
       });
 
-      function stringify(value) {
-        return (typeof value == 'number') ? value.toString() : value;
-      }
-
       if (data || data == 0) response
         .status(code)
         .send(stringify(data));
@@ -71,3 +67,7 @@ module.exports = function endpoints(app) {
     }
   });
 };
+
+function stringify(value) {
+  return (typeof value == 'number') ? value.toString() : value;
+}
