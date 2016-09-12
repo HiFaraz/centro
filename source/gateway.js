@@ -22,7 +22,7 @@ module.exports = function gateway(doc) {
     .forEach((path) => {
       Object.keys(doc.paths[path])
         .forEach((method) => {
-          const service = doc.paths[path][method]['x-service'];
+          const service = method.toLowerCase() + path;
           const newPath = ((doc.basePath.slice(-1) == '/') ? doc.basePath.slice(0, -1) : doc.basePath) + convertPath(path);
           debug('new endpoint', method, '\'' + newPath + '\'', '=>', service);
           this.promisify('server:' + method, newPath, service)
