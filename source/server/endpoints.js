@@ -25,44 +25,12 @@ module.exports = function endpoints(app) {
   });
 
   this.add('server:endpointHandler', (service, request, response, callback) => {
-    function resolve(data, code = httpCodes.OK) {
-      debug('request resolved', {
-        code: code,
-        data: data
-      });
-
-      if (data || data == 0) response
-        .status(code)
-        .send(stringify(data));
-      else response.sendStatus(code);
-      callback(null, {
-        code: code,
-        data: data
-      });
-    }
-
-    function reject(code = null, data = null) {
-      if (!code) code = httpCodes.INTERNAL_SERVER_ERROR;
-      debug('request rejected', {
-        code: code,
-        data: data
-      });
-      if (data) response
-        .status(code)
-        .send(data);
-      else response.sendStatus(code);
-      callback({
-        code: code,
-        data: data
-      }, null);
-    }
-
     try {
       const serviceResponse = this.await(service, merge({}, request.params, request.body), request.token);
-      resolve(serviceResponse.data, serviceResponse.code);
+      resolve(response, callback, serviceResponse.data, serviceResponse.code);
     } catch (error) {
       debug(error);
-      reject(error.code, error.data);
+      reject(response, callback, error.code, error.data);
       if (error == 'no service registered @ ' + service) throw error;
     }
   });
@@ -70,4 +38,36 @@ module.exports = function endpoints(app) {
 
 function stringify(value) {
   return (typeof value == 'number') ? value.toString() : value;
+}
+
+function resolve(response, callback, data, code = httpCodes.OK) {
+  debug('request resolved', {
+    code: code,
+    data: data
+  });
+
+  if (data || data == 0) response
+    .status(code)
+    .send(stringify(data));
+  else response.sendStatus(code);
+  callback(null, {
+    code: code,
+    data: data
+  });
+}
+
+function reject(response, callback, code = null, data = null) {
+  if (!code) code = httpCodes.INTERNAL_SERVER_ERROR;
+  debug('request rejected', {
+    code: code,
+    data: data
+  });
+  if (data) response
+    .status(code)
+    .send(data);
+  else response.sendStatus(code);
+  callback({
+    code: code,
+    data: data
+  }, null);
 }
