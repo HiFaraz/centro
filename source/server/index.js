@@ -1,5 +1,6 @@
 'use strict';
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const debug = require('debug')('centro:server');
 const express = require('express');
 const headerToken = require('./header-token');
@@ -39,6 +40,7 @@ function addGeneralMiddleware(app) {
     else next();
   });
   app.use(bodyParser.json());
+  app.use(cors());
   app.use(helmet());
   app.use(headerToken);
 }
